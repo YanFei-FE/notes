@@ -1,0 +1,24 @@
+﻿Git
+
+把代码从仓库克隆本地
+git clone [url]
+
+设置贡献者
+git config --global user.name “”
+git config --global user.email “”
+
+查看git下所有配置
+git .config – list
+
+查看状态
+git status
+
+单个文件提交到暂存区
+git add [filename]
+
+提交到仓库并写好注释
+git conmmit -m “注释”
+
+直接从工作区提交到版本区
+git conmmit -a -m “注释”
+

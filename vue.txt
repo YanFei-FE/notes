@@ -1,0 +1,211 @@
+事件
+阻止事件冒泡：
+    1.ev.cancelBubble = true;
+    2.@click.stop (推荐)
+
+阻止默认行为
+    ev.preventDefault();
+
+右键点击事件
+    @contextmenu
+    @contextmenu.prevent    // 阻止默认行为  (推荐)
+
+键盘事件
+    @keydown
+    @keyup
+    @keyup/keydown.enter    // 回车键
+    @keyup/keydown.up       // 上键
+    @keyup/keydown.down     // 下键
+    @keyup/keydown.left     // 左键
+    @keyup/keydown.right    // 右键
+    @keyup/keydown.delete   // 删除键
+    @keyup/keydown.esc      // esc键
+
+属性
+    v-bind   简写只要":"
+class/style
+    :class/:style="[color]"      // color是data数据里的变量
+    :class/:style={color:true}   // color是样式表里的class
+
+计算属性
+    computed:{
+    	b: function(){     // b是属性 默认调用get
+            retuen 值;
+        }
+    }
+    --------------------
+    computed:{
+    	b: {
+            get: function(){
+                return 值;
+            }
+            set: function(val){
+                return 值;
+            }
+        }
+    }
+    *computed里面可以放置一些业务逻辑代码，一定记得return
+
+模板
+    {{msg}}    // 数据更新模板变化         =>   v-text
+    {{{msg}}}  // HTML转义输出（vue1.0）   =>   v-html
+    {{*msg}}   // 数据只绑定一次（vue1.0）
+
+过滤器 -> 过滤模板数据 (model -> 过滤 -> view)
+    系统提供的过滤器（vue1.0）:
+    {{'abc' | uppercase}}           // 转大写
+    {{'ABC' | lowercase}}           // 转小写
+    {{'ABC' | capitalize}}          // 首字母大写
+    {{JSON | json}}                 // 直接显示接送数据
+    {{123 | currency}}              // 钱的符号$  
+    {{123 | currency '￥'}}         // 钱的符号￥（传参）  
+    {{'abc' | filterA | filterB}}   // 多个过滤器
+    {{'abc' | filterA  参数}}       // 过滤器传参
+
+    事件配合使用:
+    debounce     //延迟执行 "function | debounce 2000"
+
+    数据配合使用：
+    limitBy      //限制几个  v-for="value in data | limitBy 取几个值 从第几个开始"
+    filterBy     //过滤数据，获取包含参数的数据  v-for="value in data | filterBy 参数'"
+
+    排序：
+    orderBy        
+    orderBy 谁     //排序
+    orderBy 1      //正序排序
+    orderBy -1     //倒序排序
+    orderBy a      //结合写法 文本框输入1会正序排序，输入-1会倒序排序
+
+    自定义过滤器
+    Vue.filter('过滤器名称', function(value, 参数1，参数2，…){
+        retuen 值;
+    });
+    
+    双向过滤器：
+    Vue.filter('过滤器名称', {
+        read: function(){   //model -> view
+            return 值;
+        },
+        write: function(){  //view -> model
+            return 值;
+        }
+    });
+
+自定义属性指令
+    Vue.directive('指令名'， function(参数){});
+    *指令名不能有v-开头，但是使用的时候必须有v-
+
+自定元素性指令(用处不大)
+    Vue.elementDirective('指令名', {
+        bind: function(){}
+    })
+
+自定义键盘
+    Vue.directive('on').keyCodes.自定义键名 = 键盘code;
+
+生命周期(vue1.0)
+    created        //实例已经创建
+    beforCompile   //编译之前
+    compiled       //编译之前
+    ready          //插入到文档中了
+    beforDestroy   //销毁之前
+    destroyed      //销毁之后
+
+
+交互
+    请求一个普通文本数据：
+    this.$http.get('a.text').then(function(res){
+        console.log(res.data);
+    });
+
+    get：
+    this.$http.get('a.php', {
+        a: 1,
+        b: 2
+    }).then(function(res){
+        console.log(res.data);
+    });
+
+    post：
+    this.$http.post('url', {
+        a: 1,
+        b: 2
+    },{
+        emulateJson: true
+    }).then(function(res){
+        
+    });
+
+    jsonp：  //(resource v0.*)
+    this.$http.jsonp('url', {
+        a: 1,
+        b: 2
+    },{
+        jsonp: ''  //callback名字，默认名字就是callback
+    }).then(function(res){
+        
+    });
+    
+    另一种写法：
+    this.$http({
+        url: 'url',
+        data: {
+            wd:''
+        },
+        method: 'jsonp/get/post',
+        jsonp: 'cb'
+    }).then(function(res){
+        
+    },function(res){
+        
+    });
+
+防止模板闪烁（数据解析之前显示花括号）
+    标签内添加属性： v-cloak
+    样式表添加：[v-cloak]{display:none;}
+
+vue实例的一些简单方法
+    vm.$el                 //获取到元素
+    vm.$data               //就是data
+    vm.$mount              //手动挂载
+    vm.$option.属性        //获取自定义属性
+    vm.$log                //查看现在数据的状态
+    vm.$destroy            //销毁对象
+
+监听数据变化
+    vm.$watch(name, function(){});               //浅度监视
+    vm.$watch(name, function(){}，{deep:true});  //深度监视
+
+循环
+    v-for="value in data"
+    如果有重复数据：track-by="索引/数据id"   //提高循环性能
+
+vue过渡(动画)
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
