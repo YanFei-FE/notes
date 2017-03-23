@@ -181,7 +181,319 @@ vue实例的一些简单方法
     如果有重复数据：track-by="索引/数据id"   //提高循环性能
 
 vue过渡(动画)
+    本质走的css3:transtion,anumation
+    <div id="" v-show="" transition="自定义名"></div>
     
+    .自定义名-transition{
+        transition: 1s all ease;
+    }
+    .自定义名-enter{    //进入
+        opacity: 0;
+    }
+    .自定义名-leave{    //离开
+        opacity: 0;
+    }
+
+    new Vue({
+        el: "#box",
+        data: {
+            dod: true,
+        },
+        methods:{
+            tod(){
+                this.dod = !this.dod;
+            }
+        }
+    });
+    -----------------------------------------------
+    <link rel="stylesheet" href="animate.css">
+    <div id="" class="animated" v-show="" transition="自定义名"></div>
+    
+    new Vue({
+        el: "#box",
+        data: {
+            dod: true,
+        },
+        methods:{
+            tod(){
+                this.dod = !this.dod;
+            }
+        },
+        transitions:{    //定义所有动画名称
+            自定义名:{
+                enterClass: "zoomInLeft",
+                leaveClass: "zoomOutRight"
+            }
+        }
+    });
+
+vue组件
+    组件：一个大的对象
+
+    定义一个组件：
+    1.全局组件 
+    <aaa></aaa>
+    var Aaa = Vue.extend({
+        data(){    //data必须是函数形式，函数必须返回一个对象
+            return{
+                
+            }
+        },
+        methods:{
+        },
+        template: html;
+    });
+    Vue.component('aaa', Aaa);
+    -----------------------------
+    Vue.component('aaa', {
+        template: html
+    });
+
+    2.局部组件:放到某个组件内部
+    <aaa></aaa>
+    var Aaa = Vue.extend({
+        template: html;
+        data(){    //data必须是函数形式，函数必须返回一个对象
+            return{
+                
+            }
+        },
+    });
+    new Vue({
+        el: "#box",
+        data: {
+        },
+        methods:{
+        },
+        components:{
+            'aaa': Aaa
+        }
+    });
+    ---------------------------
+    new Vue({
+        el: "#box",
+        data: {
+        },
+        methods:{
+        },
+        components:{
+            data(){
+                return{
+                    
+                }
+            },
+            methods:{
+            },
+            'aaa': {
+                 template: html
+             }
+        }
+    });
+    -------------------------
+    配合模板：
+    a)
+    <script type="x-template" id="aaa">
+        html
+    </script>
+    ---------------
+    b)
+    <template id="aaa">
+        html
+    </template>
+
+    new Vue({
+        el: "#box",
+        data: {
+        },
+        methods:{
+        },
+        components:{
+            data(){
+                return{
+                    
+                }
+            },
+            methods:{
+            },
+            'aaa': {
+                 template: '#aaa'
+             }
+        }
+    });
+
+动态组件
+    <componenr :is="自定义名"></component>
+    new Vue({
+        el: "#box",
+        data: {
+           自定义名: '组件名' 
+        },
+        methods:{
+        },
+        components:{
+             '组件1': {
+                 template: 'html'
+             }，
+             '组件2': {
+                 template: 'html'
+             }
+        }
+    });
+    
+
+父子组件:vue默认情况下，子组件不能访问父组件数据
+    components:{
+        '父组件': {
+            template: 'html…子组件'，
+            components: {
+                子组件: {
+                    template: 'html'
+                }
+            }
+        }
+    }
+
+子组件获取父组件的值
+    <div id="box">
+        <aaa></aaa>
+    </div>
+
+    <template id="mb">
+        <h3>模板内容</h3>
+        <bbb :m="fu" :m-m2="fu2"></bbb>
+    </template>
+
+    new Vue({
+        el: "#box",
+        components: {
+            'aaa': {
+                data(){
+                    return {
+                        fu: 'woshi fuj'，
+                        fu2: 'woshi fuj'
+                    }
+                },
+                template: '#mb',
+                components: {
+                    'bbb': {
+                        props: ['m', 'mM2'],  // m-m2 -> mM2
+                        -------------------
+                        props: {
+                            'm': 数据类型
+                            'm2': 数据类型
+                        }, 
+                        template: '<b>孙{{m}}</b>'
+                    }
+                }
+            }
+        }
+    });
+
+父组件获取子组件的值（子组件把自己的数据发送给父组件）
+    <div id="box">
+        <aaa></aaa>
+    </div>
+
+    <template id="mb">
+        <span>我是父级->{{msg}}</span><br/>
+
+        <bbb @haha="gets"></bbb>
+    </template>
+
+    <template id="mb2">
+        <span>我是zi级</span><br/>
+        <input type="button" value="aa" @click="send">
+    </template>
+	
+    new Vue({
+        el: "#box",
+        components: {
+            'aaa': {
+            data(){
+                return {
+                fu: 'woshi fuj',
+                    msg: ''
+                }
+            },
+            methods:{
+                gets(msg){
+                    this.msg = msg;
+                    }
+                },
+                template: '#mb',
+                components: {
+                    'bbb': {
+                        template: '#mb2',
+                        data(){
+                            return {
+                                zi: 'zi'
+                            }
+                        },
+                        methods: {
+                            send(){
+                                this.$emit('haha', this.zi); //$emit想歪发送数据
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+    ------------------------------------------------
+    vm.dispath(事件名, 数据)    子级向父级发送数据
+    vm.broadcast(事件名, 数据)  父级向子级广播数据
+    配合 event:{}
+    *vue2.0已废除
+
+slot  //占位
+    <aaa>
+        <ul slot="ul-list">
+            <li></li>
+        </ul>
+        
+        <ol slot="ol-list">
+            <li></li>
+        </ol>
+    </aaa>
+    <template id="mb">
+        <span>我是父级->{{msg}}</span>
+        <slot name="ul-list">这是默认</slot>
+        <slot name="ol-list">这是默认</slot>
+    </template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
