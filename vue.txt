@@ -461,15 +461,103 @@ slot  //占位
         <slot name="ol-list">这是默认</slot>
     </template>
 
+路由（vue-router0.7.13）
+    <div id="sc">
+        <a v-link="{path: '/home'}">首页</a>
+        <a v-link="{path: '/new'}">新闻</a>
+    <div>
+    <router-view></router-view>
+    <script type="text/javascript">
+        //1.准备一个根组件
+        var App = Vue.extend();
 
+        //2.home new组件准备
+        var Home = Vue.extend({
+            template: '我是主页'
+        });
 
+        var New = Vue.extend({
+            template: '我是新闻'
+        });
 
+        //3.准备路由
+        var router = new VueRouter();
 
+        //4.关联
+        router.map({
+            'home': {
+                component: Home
+            },
+            'new': {
+                component: New
+            }
+        });
 
+        //5.启动路由
+            router.start(App, '#sc');
 
+        //5.1跳转
+        router.redirect({
+            '/' : 'home'
+        })
+    </script>
 
+多层路由
+    router.map({
+        'home': {
+            component: Home,
+            subRoutes: {
+                'login': {
+                    component: {
+                        template: '<h2>我的登录</h2>'
+                    }
+                }
+            }
+        }
+    });
 
+路由其他信息
+    {$route | json}}  -> 当前路由的信息 
+    subRoutes: {
+        'show/:id': {
+            component: ''
+        }
+    }
 
+vue-loader
+    简单的目录结构：
+    |-index.html
+    |-main.js             入口文件
+    |-App.vue             vue文件
+    |-package.json        工程文件（项目依赖、名称、配置）
+    |-webpack.config.js   webpack配置文件
+    
+    webpack工作
+        webpack
+        webpack-dev-server
+
+        vue-loader
+        vue-html-loader
+        css-loader、style-loader
+        vue-hot-reload-api@1.3.2、
+
+        babel-loader
+        babel-core
+        babel-plugin-transform-runtime
+        bable-preset-es2015
+        bable-runtime
+
+    配合vue-router
+    1.npm install vue-router
+    2.import VueRouter from 'vue-router'
+    3.Vue.use(VueRouter)
+    4.配置路由器
+    var router = new VueRouter();
+    router.map({
+        路由规则
+    });
+    5.开启
+    riuter.start()
 
 
 
