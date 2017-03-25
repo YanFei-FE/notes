@@ -559,7 +559,26 @@ vue-loader
     5.开启
     riuter.start()
 
+脚手架
+    vue-cli  ------- vue脚手架（提供好基本项目结构）
+本身集成很多项目模板
+    simple
 
+    webpack
+        Eslint 检查代码规范
+        单元测试
+    webpack-simpl
+    
+    browserify
+    browserify-simple
+本身使用流程
+1.npm install vue-cli -g   //安装脚手架
+  vue --version            //查看版本号
+2.生成项目模板
+vue init <模板名> <项目名>
+3.进入生成的项目模板 npm install
+
+ 
 
 
 
