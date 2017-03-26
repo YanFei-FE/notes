@@ -60,9 +60,10 @@ class/style
     {{123 | currency}}              // 钱的符号$  
     {{123 | currency '￥'}}         // 钱的符号￥（传参）  
     {{'abc' | filterA | filterB}}   // 多个过滤器
-    {{'abc' | filterA  参数}}       // 过滤器传参
+    {{'abc' | filterA 参数}}       // 过滤器传参(vue1.0)
+    {{'abc' | filterA(参数)}}       // 过滤器传参(vue2.0)
 
-    事件配合使用:
+    事件配合使用(vue2.0废弃):
     debounce     //延迟执行 "function | debounce 2000"
 
     数据配合使用：
@@ -90,6 +91,11 @@ class/style
             return 值;
         }
     });
+过滤器(vue2.0)
+    1.内置过滤器全部删除了
+    2.json直接转换输出
+    3.自定义过滤器还有
+
 
 自定义属性指令
     Vue.directive('指令名'， function(参数){});
@@ -100,14 +106,26 @@ class/style
         bind: function(){}
     })
 
-自定义键盘
+自定义键盘(vue1.0)
     Vue.directive('on').keyCodes.自定义键名 = 键盘code;
+自定义键盘(vue2.0)
+    Vue.config.keyCodes.自定义键名 = 键盘code;
 
 生命周期(vue1.0)
+    init           //实例刚创建
     created        //实例已经创建
     beforCompile   //编译之前
     compiled       //编译之前
     ready          //插入到文档中了
+    beforDestroy   //销毁之前
+    destroyed      //销毁之后
+生命周期(vue2.0)
+    beforeCreate   //实例刚创建，属性都没有
+    created        //实例已经创建完成，属性已经绑定
+    beforeMount    //模板编译之前
+    mounted        //模板编译之后   代替1.0的ready
+    beforeUpdate   //组件更新之前
+    updated        //组件更新之后
     beforDestroy   //销毁之前
     destroyed      //销毁之后
 
@@ -179,6 +197,16 @@ vue实例的一些简单方法
 循环
     v-for="value in data"
     如果有重复数据：track-by="索引/数据id"   //提高循环性能
+循环(vue2.0)
+    1.默认可以添加重复数据
+    2.去掉一些隐式变量
+        $index $key
+    3.之前
+        v-for="(index, val) in data"
+      现在
+        v-for="(val, index) in data"
+    4.track-by="索引/数据id"  变成 :key='index'
+        
 
 vue过渡(动画)
     本质走的css3:transtion,anumation
@@ -226,6 +254,9 @@ vue过渡(动画)
             }
         }
     });
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    vue.2.0
+    
 
 vue组件
     组件：一个大的对象
@@ -320,7 +351,30 @@ vue组件
              }
         }
     });
-
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    vue2.0变化
+    1.在每个组件模板，不再支持片段代码
+    之前：
+        <template>
+            <h3></h3><b></b>
+        </template>
+    现在：必须有根元素，包裹所有代码
+        <template>
+            <div>
+                <h3></h3><b></b>
+            </div>
+        </template>
+    2.关于组建定义
+        Vue.extend  //这种方式在2.0里面有，但是有一些改动，这种写法及即使能用，也不建议用，相当于已废弃
+        Vue.components('组件名', {    //在2.0还能继续用
+            data(){},
+            methods:{},
+            template:
+        });
+    2.0推出组件简洁定义方式
+    var Home = {
+        template:                //类似Vue.extend()
+    }
 动态组件
     <componenr :is="自定义名"></component>
     new Vue({
@@ -444,6 +498,16 @@ vue组件
     vm.broadcast(事件名, 数据)  父级向子级广播数据
     配合 event:{}
     *vue2.0已废除
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    vue(2.0)
+        1.之前子组件可以更改父组件信息，可以同步 sync,现在不允许直接给父级的数据做赋值操作
+        2.如果想更改：
+            a)父组件每次传一个对象给子组件，利用对象之间是引用关系
+            b)如果只是想不报错，可以用mountd做中转，但是不能同步
+    单一事件管理组件通讯
+    var Event = new Vue();
+    Event.$emit(事件名, 数据)
+    Event.on(事件名, function(data){});
 
 slot  //占位
     <aaa>
@@ -567,7 +631,7 @@ vue-loader
     webpack
         Eslint 检查代码规范
         单元测试
-    webpack-simpl
+    webpack-simple
     
     browserify
     browserify-simple
@@ -579,10 +643,6 @@ vue init <模板名> <项目名>
 3.进入生成的项目模板 npm install
 
  
-
-
-
-
 
 
 
