@@ -463,29 +463,29 @@ vue组件
         el: "#box",
         components: {
             'aaa': {
-            data(){
-                return {
-                    fu: 'woshi fuj',
-                    msg: ''
-                }
-            },
-            methods:{
-                gets(msg){
-                    this.msg = msg;
+                data(){
+                    return {
+                        fu: 'woshi fuj',
+                        msg: ''
                     }
                 },
-                template: '#mb',
-                components: {
-                    'bbb': {
-                        template: '#mb2',
-                        data(){
-                            return {
-                                zi: 'zi'
-                            }
-                        },
-                        methods: {
-                            send(){
-                                this.$emit('haha', this.zi); //$emit向外发送数据
+                methods:{
+                    gets(msg){
+                        this.msg = msg;
+                    },
+                    template: '#mb',
+                    components: {
+                        'bbb': {
+                            template: '#mb2',
+                            data(){
+                                return {
+                                    zi: 'zi'
+                                }
+                            },
+                            methods: {
+                                send(){
+                                    this.$emit('haha', this.zi); //$emit向外发送数据
+                                }
                             }
                         }
                     }
