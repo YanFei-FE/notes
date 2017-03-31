@@ -11,6 +11,60 @@
     2.文档对象模型(DOM)
     3.浏览器对象模型(BOM)
 
+Web浏览器对ECMAScript的支持
+    浏览器ECMAScript                  兼容性
+    Netscape Navigator 2              ----
+    Netscape Navigator 3              ----
+    Netscape Navigator 4 -- 4.05      ----
+    Netscape Navigator 4.06 -- 4.79   第1 版
+    Netscape 6+ (Mozilla 0.6.0+)      第3 版
+    Internet Explorer 3               ----
+    Internet Explorer 4               ----
+    Internet Explorer 5               第1 版
+    Internet Explorer 5.5 -- 7        第3 版
+    Internet Explorer 8               第3.1 版(不完全兼容)
+    Internet Explorer 9               第5 版
+    Opera 6 - 7.1                     第2 版
+    Opera 7.2+                        第3 版
+    Opera 11+                         第5 版
+    Safari 3+                         第3 版
+    Firefox 1--2                      第3 版
+    Firefox 3/4/5/6/7/8/9             第3/5 版
+
+文档对象模型(DOM)
+    文档对象模型(DOM，Document Object Model)是针对XML 但经过扩展用于HTML 的应用程序编程接口(API，Application Programming Interface)。
+    DOM 有三个级别，每个级别都会新增很多内容模块和标准(有兴趣可以搜索查询)。以下是主流浏览器对DOM 支持的情况：
+    浏览器DOM            兼容性
+    Netscape Navigator 1 -- 4.x              ----
+    Netscape Navigator 6+(Mozilla 0.6.0+)    1 级、2 级(几乎全部)、3 级(部分)
+    Internet Explorer 2 -- 4.x               ----
+    Internet Explorer 5                      1 级(最小限度)
+    Internet Explorer 5.5 -- 7               1 级(几乎全部)
+    Opera 1 -- 6                             ----
+    Opera 7 -- 8.x                           1 级(几乎全部)、2 级(部分)
+    Opera 9+                                 1 级、2 级(几乎全部)、3 级(部分)
+    Safari 1.0x                              1 级
+    Safari 2+                                1 级、2 级(部分)
+    Chrome 0.2+                              1 级、2 级(部分)
+    Firefox 1+                               1 级、2 级(几乎全部)、3 级(部分)
+
+浏览器对象模型(BOM)
+    访问和操作浏览器窗口的浏览器对象模型(BOM，Browser Object Model)。开发人员使用BOM 可以控制浏览器显示页面以外的部分。而BOM 真正与众不同的地方(也是经常会导致问题的地方)，还是它作为JavaScript 实现的一部分，至今仍没有相关的标准。
+
+JavaScript版本
+    身为Netscape“继承人”的Mozilla 公司，是目前唯一沿用最初的JavaScript 版本编号的浏览器开发商。在网景把JavaScript 转手给Mozilla 项目的时候，JavaScript 在浏览器中最后的版本号是1.3。后来，随着Mozilla 继续开发，JavaScript 版本号逐步递增。
+    浏览器                        JavaScript 版本
+    Netscape Navigator            2 1.0
+    Netscape Navigator            3 1.1
+    Netscape Navigator            4 1.2
+    Netscape Navigator            4.06 1.3
+    Netscape 6+ (Mozilla 0.6.0+)  1.5
+    Firefox 1                     1.5
+    Firefox 1.5                   1.6
+    Firefox 2                     1.7
+    Firefox 3                     1.8
+    Firefox 3.1+                  1.9 
+
 <Script>标签解析
     <script>xxx</script>这组标签，是用于在html 页面中插入js 的主要方法。它主要有以下几个属性：
     1.charset
@@ -70,6 +124,26 @@ JavaScript语法构成
         {x:1, y:2}   //对象字面量表达式
         [1,2,3,4,5]  //数组字面量表达式
 
+ECMAScript-262 描述了一组具有特定用途的关键字，一般用于控制语句的开始或结束，或者用于执行特定的操作等。关键字也是语言保留的，不能用作标识符。
+    ECMAScript全部关键字:
+    break       else       new       var
+    case        finally    return    void
+    catch       for        switch    while
+    continue    function   this      with
+    default     if         throw     delete
+    in          try        do        instanceof
+    typeof
+
+ECMAScript-262 还描述了另一组不能用作标识符的保留字。尽管保留字在JavaScript中还没有特定的用途，但它们很有可能在将来被用作关键字。
+    ECMAScript-262 第3版定义的全部保留字:
+    abstract     enum          int          short
+    boolean      export        interface    static
+    byte         extends       long         super
+    char         final         native       synchronized
+    class        float         package      throws
+    const        goto          private      transient
+    debugger     implements    protected    volatile
+    double       import        public
 
 变量
     ECMAScript 的变量是松散类型的，所谓松散类型就是用来保存任何类型的数据。定义变量时要使用var 操作符（var 是关键），后面跟一个变量名（变量名是标识符）。
@@ -117,9 +191,26 @@ js中的数据类型：
 
     ECMAScript 不支持任何创建自定义类型的机制，所有值都成为以上6 中数据类型之一。
 
-typeof返回值：number、string、boolean、undefined、object、function;
-typeof操作符可以操作变量，也可以操作字面量。虽然也可以这样使用：typeof(box)，但，typeof 是操作符而非内置函数。
-PS：函数在ECMAScript 中是对象，不是一种数据类型。所以，使用typeof 来区分function 和object 是非常有必要的。
+typeof操作符
+    typeof 操作符是用来检测变量的数据类型。对于值或变量使用typeof 操作符会返回如下字符串。
+    字符串        描述
+    undefined     未定义
+    boolean       布尔值
+    string        字符串
+    number        数值
+    object        对象或null
+    function      函数
+
+    var box;                  box是Undefind类型，只是undefind，返回类型是nudefind
+    var box = {}/new object   box是Obect类型，值是[object object]，类型返回的字符串是object
+    var box = null            box是Null类型，值是null，类型返回的字符串是object
+    function box(){}          box是function函数，值是function box(){}，类型返回的字符串是function
+
+    空的对象，表示这个对象创建了，里面还没东西
+    空对象，表示没有创建，就是一个null
+
+    typeof操作符可以操作变量，也可以操作字面量。虽然也可以这样使用：typeof(box)，但，typeof 是操作符而非内置函数。
+    PS：函数在ECMAScript 中是对象，不是一种数据类型。所以，使用typeof 来区分function 和object 是非常有必要的。
 
 Undefined类型
     Undefined 类型只有一个值，即特殊的undefined。在使用var 声明变量，但没有对其初始化时，这个变量的值就是undefined。
@@ -166,6 +257,18 @@ Boolean类型
     } else {
         alert('如果条件为false，就执行我这条！');
     } 
+
+    以下是其他类型转换成 Boolean类型规则
+
+    数据类型      转换为true的值               转换为false的值
+    Boolean       true                         false
+    String        任何非空字符串               空字符串
+    Number        任何非零数字值(包括无穷大)   0 和NaN
+    Object        任何对象                     null
+    Undefined                                  undefined
+
+typeof 操作符可以操作变量，也可以操作字面量。虽然也可以这样使用：typeof(box)，但，typeof 是操作符而非内置函数。
+PS：函数在ECMAScript 中是对象，不是一种数据类型。所以，使用typeof 来区分function 和object 是非常有必要的。
 
 Number类型
     Number 类型包含两种数值：整型和浮点型。为了支持各种数值类型，ECMA-262 定义了不同的数值字面量格式。
