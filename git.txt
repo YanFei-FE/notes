@@ -21,4 +21,3 @@ git conmmit -m “注释”
 
 直接从工作区提交到版本区
 git conmmit -a -m “注释”
-
