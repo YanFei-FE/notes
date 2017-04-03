@@ -1566,7 +1566,7 @@ Date类型
       var str = 'This is a Box!';
       alert(pattern.test(str));
      
-     /*使用一条语句实现正则匹配*/
+      /*使用一条语句实现正则匹配*/
       alert(/box/i.test('This is a Box!'));   //模式和字符串替换掉了两个变量
       
       /*使用exec 返回匹配数组*/
@@ -1906,6 +1906,626 @@ Date类型
       alert(pattern.test(str));
       
       PS：以上是简单电子邮件验证，复杂的要比这个复杂很多，大家可以搜一下。
+
+Function类型
+    在ECMAScript 中，Function(函数)类型实际上是对象。
+    每个函数都是Function 类型的实例，而且都与其他引用类型一样具有属性和方法。
+    由于函数是对象，因此函数名实际上也一个指向函数对象的指针。
+
+函数的声明方式
+    1.普通的函数声明
+      function box(num1, num2) {
+          return num1+ num2;
+      }
+    2.使用变量初始化函数
+      var box= function(num1, num2) {
+          return num1 + num2;
+      };
+    3.使用Function 构造函数
+      var box= new Function('num1', 'num2' ,'return num1 + num2');
+    
+    PS：第三种方式我们不推荐，因为这种语法会导致解析两次代码
+        （第一次解析常规ECMAScript 代码，第二次是解析传入构造函数中的字符串），从而影响性能。
+        但我们可以通过这种语法来理解"函数是对象，函数名是指针"的概念
+
+作为值的函数
+    ECMAScript 中的函数名本身就是变量，所以函数也可以作为值来使用。
+    也就是说，不仅可以像传递参数一样把一个函数传递给另一个函数，而且可以将一个函数作为另一个函数的结果返回。
+
+    function box(sumFunction, num) {
+        return sumFunction(num);         //someFunction
+    }
+    function sum(num) {
+        return num + 10;
+    }
+    var result = box(sum, 10);           //传递函数到另一个函数里
+
+函数内部属性
+    在函数内部，有两个特殊的对象：arguments 和this。
+    arguments 是一个类数组对象，包含着传入函数中的所有参数，主要用途是保存函数参数。
+    但这个对象还有一个名叫callee 的属性，该属性是一个指针，指向拥有这个arguments 对象的函数。
+
+    function box(num) {
+        if (num <= 1) {
+            return 1;
+        } else {
+            return num * box(num-1);      //一个简单的的递归
+        }
+    }
+
+    对于阶乘函数一般要用到递归算法，所以函数内部一定会调用自身；
+    如果函数名不改变是没有问题的，但一旦改变函数名，内部的自身调用需要逐一修改。
+    为了解决这个问题，我们可以使用arguments.callee 来代替。
+
+    function box(num) {
+        if (num <= 1) {
+            return 1;
+        } else {
+            return num * arguments.callee(num-1);     //使用callee 来执行自身
+        }
+    }
+
+    函数内部另一个特殊对象是this，其行为与Java 和C#中的this 大致相似。
+    换句话说，this 引用的是函数据以执行操作的对象，或者说函数调用语句所处的那个作用域。
+    PS：当在全局作用域中调用函数时，this 对象引用的就是window。
+
+    //便于理解的改写例子
+    window.color = '红色的';         //全局的，或者var color = '红色的';也行
+    alert(this.color);               //打印全局的color
+    var box = {
+        color : '蓝色的',            //局部的color
+        sayColor : function () {
+            alert(this.color);       //此时的this 只能box 里的color
+        }
+    };
+    box.sayColor();                  //打印局部的color
+    alert(this.color);               //还是全局的
+
+    //引用教材的原版例子
+    window.color = '红色的';         //或者var color = '红色的';也行
+    var box = {
+        color : '蓝色的'
+    };
+    function sayColor() {
+        alert(this.color);           //这里第一次在外面，第二次在box 里面
+    }
+    getColor();
+    box.sayColor = sayColor;         //把函数复制到box 对象里，成为了方法
+    box.sayColor();
+
+函数属性和方法
+    ECMAScript 中的函数是对象，因此函数也有属性和方法。
+    每个函数都包含两个属性：length 和prototype。
+    其中，length 属性表示函数希望接收的命名参数的个数。
+
+    function box(name, age) {
+        alert(name + age);
+    }
+    alert(box.length);               //2
+
+    PS：对于prototype 属性，它是保存所有实例方法的真正所在，也就是原型。
+        这个属性，我们将在面向对象一章详细介绍。
+        而prototype 下有两个方法：apply()和call()，每个函数都包含这两个非继承而来的方法。
+        这两个方法的用途都在特定的作用域中调用函数，实际上等于设置函数体内this 对象的值。
+
+    function box(num1, num2) {
+        return num1 + num2;                    //原函数
+    }
+
+    function sayBox(num1, num2) {
+        return box.apply(this, [num1, num2]);  //this 表示作用域，这里是window
+    }                                          //[]表示box 所需要的参数
+
+    function sayBox2(num1, num2) {
+        return box.apply(this, arguments);     //arguments 对象表示box 所需要的参数
+    }
+
+    alert(sayBox(10,10));                      //20
+    alert(sayBox2(10,10));                     //20
+
+    call()方法于apply()方法相同，他们的区别仅仅在于接收参数的方式不同。
+    对于call()方法而言，第一个参数是作用域，没有变化，变化只是其余的参数都是直接传递给函数的。
+
+    function box(num1, num2) {
+        return num1 + num2;
+    }
+
+    function callBox(num1, num2) {
+        return box.call(this, num1, num2);     //和apply 区别在于后面的传参
+    }
+
+    alert(callBox(10,10));
+
+    事实上，传递参数并不是apply()和call()方法真正的用武之地；
+    它们经常使用的地方是能够扩展函数赖以运行的作用域。
+
+    var color = '红色的';                      //或者window.color = '红色的';也行
+    var box = {
+        color : '蓝色的'
+    };
+
+    function sayColor() {
+        alert(this.color);
+    }
+
+    sayColor();                                //作用域在window
+
+    sayColor.call(this);                       //作用域在window
+    sayColor.call(window);                     //作用域在window
+    sayColor.call(box);                        //作用域在box，对象冒充
+
+    这个例子是之前作用域理解的例子修改而成，
+    我们可以发现当我们使用call(box)方法的时候，sayColor()方法的运行环境已经变成了box 对象里了。
+
+    使用call()或者apply()来扩充作用域的最大好处，
+    就是对象不需要与方法发生任何耦合关系(耦合，就是互相关联的意思，扩展和维护会发生连锁反应)。
+    也就是说，box 对象和sayColor()方法之间不会有多余的关联操作，比如box.sayColor = sayColor;
+
+变量、作用域及内存
+    JavaScript 的变量与其他语言的变量有很大区别。
+    JavaScript 变量是松散型的(不强制类型)本质，决定了它只是在特定时间用于保存特定值的一个名字而已。
+    由于不存在定义某个变量必须要保存何种数据类型值的规则，变量的值及其数据类型可以在脚本的生命周期内改变。
+
+变量及作用域
+    1.基本类型和引用类型的值
+      ECMAScript 变量可能包含两种不同的数据类型的值：基本类型值 和 引用类型值。
+      基本类型值 指的是那些保存在栈内存中的简单数据段，即这种值完全保存在内存中的一个位置。
+      而 引用类型值 则是指那些保存在堆内存中的对象，
+      意思是变量中保存的实际上只是一个指针，这个指针指向内存中的另一个位置，该位置保存对象。
+
+      将一个值赋给变量时，解析器必须确定这个值是基本类型值，还是引用类型值。
+      基本类型值有以下几种：Undefined、Null、Boolean、Number 和String。
+      这些类型在内存中分别占有固定大小的空间，他们的值保存在栈空间，我们通过按值来访问的。
+
+      PS：在某些语言中，字符串以对象的形式来表示，因此被认为是引用类型。ECMAScript放弃这一传统。
+
+      如果赋值的是引用类型的值，则必须在堆内存中为这个值分配空间。
+      由于这种值的大小不固定，因此不能把它们保存到栈内存中。
+      但内存地址大小的固定的，因此可以将内存地址保存在栈内存中。
+      这样，当查询引用类型的变量时，先从栈中读取内存地址，然后再通过地址找到堆中的值。
+      对于这种，我们把它叫做按引用访问。
+
+    2.动态属性
+      定义基本类型值和引用类型值的方式是相似的：创建一个变量并为该变量赋值。
+      但是，当这个值保存到变量中以后，对不同类型值可以执行的操作则大相径庭。
+
+      var box = new Object();        //创建引用类型
+      box.name = 'Lee';              //新增一个属性
+      alert(box.name);               //输出
+
+      如果是基本类型的值添加属性的话，就会出现问题了。
+      var box = 'Lee';               //创建一个基本类型
+      box.age = 27;                  //给基本类型添加属性
+      alert(box.age);                //undefined
+
+    3.复制变量值
+      在变量复制方面，基本类型和引用类型也有所不同。
+      基本类型复制的是值本身，而引用类型复制的是地址。
+
+      var box = 'Lee';              //在栈内存生成一个box 'Lee'
+      var box2 = box;               //在栈内存再生成一个box2 'Lee'
+      box2 是虽然是box1 的一个副本，但从图示可以看出，它是完全独立的。
+      也就是说，两个变量分别操作时互不影响。
+      
+      var box = new Object();       //创建一个引用类型
+      box.name = 'Lee';             //新增一个属性
+      var box2 = box;               //把引用地址赋值给box2
+      在引用类型中，box2 其实就是box，因为他们指向的是同一个对象。
+      如果这个对象中的name 属性被修改了，box2.name 和box.name 输出的值都会被相应修改掉了。
+
+    4.传递参数
+      ECMAScript 中所有函数的参数都是按值传递的，
+      言下之意就是说，参数不会按引用传递，虽然变量有基本类型和引用类型之分。
+
+      function box(num) {           //按值传递，传递的参数是基本类型
+      num += 10;                    //这里的num 是局部变量，全局无效
+      return num;
+      }
+      var num = 50;
+      var result = box(num);
+      alert(result);                //60
+      alert(num);                   //50
+
+      PS：以上的代码中，传递的参数是一个基本类型的值。
+          而函数里的num 是一个局部变量，和外面的num 没有任何联系。
+          下面给出一个参数作为引用类型的例子。
+
+      function box(obj) {           //按值传递，传递的参数是引用类型
+      obj.name = 'Lee';
+      }
+      var p = new Object();
+      box(p);
+      alert(p.name);
+
+      PS：如果存在按引用传递的话，那么函数里的那个变量将会是全局变量，在外部也可以访问。
+          比如PHP 中，必须在参数前面加上&符号表示按引用传递。
+          而ECMAScript 没有这些，只能是局部变量。
+          可以在PHP 中了解一下。
+      PS：所以按引用传递和传递引用类型是两个不同的概念。
+
+      function box(obj) {
+          obj.name = 'Lee';
+          var obj = new Object();   //函数内部又创建了一个对象
+          obj.name = 'Mr.';         //并没有替换掉原来的obj
+      }
+
+      最后得出结论，ECMAScript 函数的参数都将是局部变量，也就是说，没有按引用传递。
+
+    5.检测类型
+      要检测一个变量的类型，我们可以通过typeof 运算符来判别。诸如：
+      var box = 'Lee';
+      alert(typeof box);             //string
+
+      虽然typeof 运算符在检查基本数据类型的时候非常好用，但检测引用类型的时候，它就不是那么好用了。
+      通常，我们并不想知道它是不是对象，而是想知道它到底是什么类型的对象。
+      因为数组也是object，null 也是Object 等等。
+
+      这时我们应该采用instanceof 运算符来查看。
+      var box = [1,2,3];
+      alert(box instanceof Array);   //是否是数组
+      var box2 = {};
+      alert(box2 instanceof Object); //是否是对象
+      var box3 = /g/;
+      alert(box3 instanceof RegExp); //是否是正则表达式
+      var box4 = new String('Lee');
+      alert(box4 instanceof String); //是否是字符串对象
+
+      PS：当使用instanceof 检查基本类型的值时，它会返回false。
+    6.执行环境及作用域
+      执行环境是JavaScript 中最为重要的一个概念。
+      执行环境定义了变量或函数有权访问的其他数据，决定了它们各自的行为。
+
+      全局执行环境是最外围的执行环境。
+      在Web 浏览器中，全局执行环境被认为是window对象。
+      因此所有的全局变量和函数都是作为window 对象的属性和方法创建的。
+      var box = 'blue';              //声明一个全局变量
+      function setBox() {
+          alert(box);                //全局变量可以在函数里访问
+      }
+      setBox();                      //执行函数
+
+      全局的变量和函数，都是window 对象的属性和方法。
+      var box = 'blue';
+      function setBox() {
+          alert(window.box);         //全局变量即window 的属性
+      }
+      window.setBox();               //全局函数即window 的方法
+
+      PS：当执行环境中的所有代码执行完毕后，该环境被销毁，保存在其中的所有变量和函数定义也随之销毁。
+          如果是全局环境下，需要程序执行完毕，或者网页被关闭才会销毁。
+      PS：每个执行环境都有一个与之关联的变量对象，就好比全局的window 可以调用变量和属性一样。
+          局部的环境也有一个类似window 的变量对象，环境中定义的所有变量和函数都保存在这个对象中。
+          (我们无法访问这个变量对象，但解析器会处理数据时后台使用它)
+
+      函数里的局部作用域里的变量替换全局变量，但作用域仅限在函数体内这个局部环境。
+      var box = 'blue';
+      function setBox() {
+          var box = 'red';           //这里是局部变量，出来就不认识了
+          alert(box);
+      }
+      setBox();
+      alert(box);
+
+      通过传参，可以替换函数体内的局部变量，但作用域仅限在函数体内这个局部环境。
+      var box = 'blue';
+      function setBox(box) {         //通过传参，替换了全局变量
+          alert(box);
+      }
+      setBox('red');
+      alert(box);
+
+      函数体内还包含着函数，只有这个函数才可以访问内一层的函数。
+      var box = 'blue';
+      function setBox() {
+          function setColor() {
+              var b = 'orange';
+              alert(box);
+              alert(b);
+          }
+          setColor();                //setColor()的执行环境在setBox()内
+      }
+      setBox();
+
+      PS：每个函数被调用时都会创建自己的执行环境。
+          当执行到这个函数时，函数的环境就会被推到环境栈中去执行，
+          而执行后又在环境栈中弹出(退出)，把控制权交给上一级的执行环境。
+      PS：当代码在一个环境中执行时，就会形成一种叫做作用域链的东西。
+          它的用途是保证对执行环境中有访问权限的变量和函数进行有序访问。
+          作用域链的前端，就是执行环境的变量对象。
+
+    7.没有块级作用域
+      块级作用域表示诸如if 语句等有花括号封闭的代码块，所以，支持条件判断来定义变量。
+      if (true) {                      //if 语句代码块没有局部作用域
+          var box = 'Lee';
+      }
+      alert(box);
+
+      for 循环语句也是如此
+      for (var i = 0; i < 10; i ++) {  //没有局部作用域
+          var box = 'Lee';
+      }
+      alert(i);
+      alert(box);
+
+      var 关键字在函数里的区别
+      function box(num1, num2) {
+          var sum = num1 + num2;       //如果去掉var 就是全局变量了
+          return sum;
+      }
+      alert(box(10,10));
+      alert(sum);                      //报错
+
+      PS：非常不建议不使用var 就初始化变量，因为这种方法会导致各种意外发生。
+          所以初始化变量的时候一定要加上var。
+
+      一般确定变量都是通过搜索来确定该标识符实际代表什么。
+      var box = 'blue';
+      function getBox() {
+          return box;                  //代表全局box
+      }                                //如果加上函数体内加上var box = 'red'
+      alert(getBox());                 //那么最后返回值就是red
+
+      PS：变量查询中，访问局部变量要比全局变量更快，因为不需要向上搜索作用域链。
+
+内存问题
+    JavaScript 具有自动垃圾收集机制，也就是说，执行环境会负责管理代码执行过程中使用的内存。
+    其他语言比如C 和C++，必须手工跟踪内存使用情况，适时的释放，否则会造成很多问题。
+    而JavaScript 则不需要这样，它会自行管理内存分配及无用内存的回收。
+
+    JavaScript 最常用的垃圾收集方式是标记清除。
+    垃圾收集器会在运行的时候给存储在内存中的变量加上标记。
+    然后，它会去掉环境中正在使用变量的标记，而没有被去掉标记的变量将被视为准备删除的变量。
+    最后，垃圾收集器完成内存清理工作，销毁那些带标记的值并回收他们所占用的内存空间。
+
+    垃圾收集器是周期性运行的，这样会导致整个程序的性能问题。
+    比如IE7 以前的版本，它的垃圾收集器是根据内存分配量运行的，
+    比如256 个变量就开始运行垃圾收集器，这样，就不得不频繁地运行，从而降低的性能。
+
+    一般来说，确保占用最少的内存可以让页面获得更好的性能。
+    那么优化内存的最佳方案，就是一旦数据不再有用，那么将其设置为null 来释放引用，这个做法叫做解除引用。
+    这一做法适用于大多数全局变量和全局对象。
+    var o = {
+        name : 'Lee'
+    };
+    o = null;                        //解除对象引用，等待垃圾收集器回收
+
+基本包装类型
+    为了便于操作基本类型值，ECMAScript 提供了3 个特殊的引用类型：Boolean、Number和String。
+    这些类型与其他引用类型相似，但同时也具有与各自的基本类型相应的特殊行为。
+    实际上，每当读取一个基本类型值的时候，后台就会创建一个对应的基本包装类型的对象，
+    从而能够调用一些方法来操作这些数据。
+
+基本包装类型概述
+    var box = 'Mr. Lee';             //定义一个字符串
+    var box2 = box.substring(2);     //截掉字符串前两位
+    alert(box2);                     //输出新字符串
+
+    变量box 是一个字符串类型，
+    而box.substring(2)又说明它是一个对象(PS：只有对象才会调用方法)，最后把处理结果赋值给box2。
+    'Mr. Lee'是一个字符串类型的值，按道理它不应该是对象，不应该会有自己的方法，比如：
+    alert('Mr. Lee'.substring(2));   //直接通过值来调用方法
+
+    1.字面量写法：
+      var box = 'Mr. Lee';           //字面量
+      box.name = 'Lee';              //无效属性
+      box.age = function () {        //无效方法
+          return 100;
+      };
+      alert(box);                    //Mr. Lee
+      alert(box.substring(2));       //. Lee
+      alert(typeof box);             //string
+      alert(box.name);               //undefined
+      alert(box.age());              //错误
+
+    2.new 运算符写法：
+      var box = new String('Mr. Lee');  //new 运算符
+      box.name = 'Lee';                 //有效属性
+      box.age = function () {           //有效方法
+          return 100;
+      };
+      alert(box);                       //Mr. Lee
+      alert(box.substring(2));          //. Lee
+      alert(typeof box);                //object
+      alert(box.name);                  //Lee
+      alert(box.age());                 //100
+
+      以上字面量声明和new 运算符声明很好的展示了他们之间的区别。
+      但有一定还是可以肯定的，那就是不管字面量形式还是new 运算符形式，都可以使用它的内置方法。
+      并且Boolean 和Number 特性与String 相同，三种类型可以成为基本包装类型。
+      
+      PS：在使用new 运算符创建以上三种类型的对象时，可以给自己添加属性和方法，
+          但我们建议不要这样使用，因为这样会导致根本分不清到底是基本类型值还是引用类型值。
+
+Boolean类型
+    Boolean 类型没有特定的属性或者方法。
+
+Number类型
+    Number 类型有一些静态属性(直接通过Number 调用的属性，而无须new 运算符)和方法。
+
+    Number 静态属性
+    属性               描述
+    MAX_VALUE          表示最大数
+    MIN_VALUE          表示最小值
+    NaN                非数值
+    NEGATIVE_INFINITY  负无穷大，溢出返回该值
+    POSITIVE_INFINITY  无穷大，溢出返回该值
+    prototype          原型，用于增加新属性和方法
+
+    Number 对象的方法
+    方法               描述
+    toString()         将数值转化为字符串，并且可以转换进制
+    toLocaleString()   根据本地数字格式转换为字符串
+    toFixed()          将数字保留小数点后指定位数并转化为字符串
+    toExponential()    将数字以指数形式表示，保留小数点后指定位数并转化为字符串
+    toPrecision()      指数形式或点形式表述数，保留小数点后面指定位数并转化为字符串
+
+    var box = 1000.789;
+    alert(box.toString());        //转换为字符串，传参可以转换进制
+    alert(box.toLocaleString());  //本地形式，1,000.789
+    alert(box.toFixed(2));        //小数点保留，1000.78
+    alert(box.toExponential());   //指数形式，传参会保留小数点
+    alert(box.toPrecision(3));    //指数或点形式，传参保留小数点
+
+String类型
+    String 类型包含了三个属性和大量的可用内置方法。
+
+    String对象属性
+    属性                 描述
+    length               返回字符串的字符长度
+    constructor          返回创建String 对象的函数
+    prototype            通过添加属性和方法扩展字符串定义
+
+    String 也包含对象的通用方法，
+    比如valueOf()、toLocaleString()和toString()方法，
+    但这些方法都返回字符串的基本值。
+
+    字符方法
+    方法                   描述
+    charAt(n)              返回指定索引位置的字符
+    charCodeAt(n)          以Unicode 编码形式返回指定索引位置的字符
+
+    var box = 'Mr.Lee';
+    alert(box.charAt(1));       //r
+    alert(box.charCodeAt(1));   //114
+    alert(box[1]);              //r，通过数组方式截取
+
+    PS：box[1]在IE 浏览器会显示undefined，所以使用时要慎重。
+
+    字符串操作方法
+    方法                 描述
+    concat(str1...str2)  将字符串参数串联到调用该方法的字符串
+    slice(n,m)           返回字符串n 到m 之间位置的字符串
+    substring(n,m)       同上
+    substr(n,m)          返回字符串n 开始的m 个字符串
+
+    var box = 'Mr.Lee';
+    alert(box.concat(' is ', ' Teacher ', '!')); //Mr.Lee is Teacher !
+    alert(box.slice(3));                         //Lee
+    alert(box.slice(3,5));                       //Le
+    alert(box.substring(3));                     //Lee
+    alert(box.substring(3,5));                   //Le
+    alert(box.substr(3));                        //Lee
+    alert(box.substr(3,5));                      //Lee
+
+    var box = 'Mr.Lee';
+    alert(box.slice(-3));                        //Lee，6+(-3)=3 位开始
+    alert(box.substring(-3));                    //Mr.Lee 负数返回全部
+    alert(box.substr(-3));                       //Lee，6+(-3)=3 位开始
+
+    var box = 'Mr.Lee';
+    alert(box.slice(3, -1));                     //Le 6+(-1)=5, (3,5)
+    alert(box.substring(3, -1));                 //Mr. 第二参为负，直接转0，
+                                                 //并且方法会把较小的数字提前，(0,3)
+
+    alert(box.substr(3, -1));                    //'' 第二参数为负，直接转0 ，(3,0)
+
+    PS：IE 的JavaScript 实现在处理向substr()方法传递负值的情况下存在问题，
+        它会返回原始字符串，使用时要切记。
+
+    字符串位置方法
+    方法                 描述
+    indexOf(str, n)      从n 开始搜索的第一个str，并将搜索的索引值返回
+    lastIndexOf(str, n)  从n 开始搜索的最后一个str，并将搜索的索引值返回
+
+    var box = 'Mr.Lee is Lee';
+    alert(box.indexOf('L'));             //3
+    alert(box.indexOf('L', 5));          //10
+    alert(box.lastIndexOf('L'));         //10
+    alert(box.lastIndexOf('L', 5));      //3，从指定的位置向前搜索
+
+    PS：如果没有找到想要的字符串，则返回-1。
+
+    var box = 'Mr.Lee is Lee';           //包含两个L 的字符串
+    var boxarr = [];                     //存放L 位置的数组
+    var pos = box.indexOf('L');          //先获取第一个L 的位置
+    while (pos > -1) {                   //如果位置大于-1，说明还存在L
+        boxarr.push(pos);                //添加到数组
+        pos = box.indexOf('L', pos + 1); //从新赋值pos 目前的位置
+    }
+    alert(boxarr);                       //输出
+
+    大小写转换方法
+    方法                   描述
+    toLowerCase(str)       将字符串全部转换为小写
+    toUpperCase(str)       将字符串全部转换为大写
+    toLocaleLowerCase(str) 将字符串全部转换为小写，并且本地化
+    toLocaleupperCase(str) 将字符串全部转换为大写，并且本地化
+
+    var box = 'Mr.Lee is Lee';
+    alert(box.toLowerCase());            //全部小写
+    alert(box.toUpperCase());            //全部大写
+    alert(box.toLocaleLowerCase());      //
+    alert(box.toLocaleUpperCase());      //
+
+    PS：只有几种语言（如土耳其语）具有地方特有的大小写本地性，
+        一般来说，是否本地化效果都是一致的。
+
+    字符串的模式匹配方法
+    方法                           描述
+    match(pattern)                 返回pattern 中的子串或null
+    replace(pattern, replacement)  用replacement 替换pattern
+    search(pattern)                返回字符串中pattern 开始位置
+    split(pattern)                 返回字符串按指定pattern 拆分的数组
+
+    正则表达式在字符串中的应用，在前面的章节已经详细探讨过，这里就不再赘述了。
+    以上中match()、replace()、serach()、split()在普通字符串中也可以使用。
+
+    var box = 'Mr.Lee is Lee';
+    alert(box.match('L'));               //找到L，返回L 否则返回null
+    alert(box.search('L'));              //找到L 的位置，和indexOf 类型
+    alert(box.replace('L', 'Q'));        //把L 替换成Q
+    alert(box.split(' '));               //以空格分割成字符串
+
+    其他方法
+    方法                      描述
+    fromCharCode(ascii)       静态方法，输出Ascii 码对应值
+    localeCompare(str1,str2)  比较两个字符串，并返回相应的值
+
+    alert(String.fromCharCode(76));      //L，输出Ascii 码对应值
+
+    localeCompare(str1,str2)方法详解：比较两个字符串并返回以下值中的一个；
+    1.如果字符串在字母表中应该排在字符串参数之前，则返回一个负数。(多数-1)
+    2.如果字符串等于字符串参数，则返回0。
+    3.如果字符串在自附表中应该排在字符串参数之后，则返回一个正数。(多数1)
+
+    var box = 'Lee';
+    alert(box.localeCompare('apple'));   //1
+    alert(box.localeCompare('Lee'));     //0
+    alert(box.localeCompare('zoo'));     //-1
+
+    HTML 方法
+    方法                 描述
+    anchor(name)         <a name="name">str</a>
+    big()                <big>str</big>
+    blink()              <blink>str</blink>
+    bold()               <b>Str</b>
+    fixed()              <tt>Str</tt>
+    fontcolor(color)     <font color="color">str</font>
+    fontsize(size)       <font size="size">str</font>
+    link(URL)            <a href="URL">str</a>
+    small()              <small>str</small>
+    strike()             <strike>str</strike>
+    italics()            <i>italics</i>
+    sub()                <sub>str</sub>
+    sup()                <sup>str</sup>
+
+    以上是通过JS 生成一个html 标签，根据经验，没什么太大用处，做个了解。
+
+    var box = 'Lee'; 
+    alert(box.link('http://www.yc60.com'));  //超链接
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
