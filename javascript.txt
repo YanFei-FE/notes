@@ -2511,8 +2511,8 @@ String类型
 
     以上是通过JS 生成一个html 标签，根据经验，没什么太大用处，做个了解。
 
-    var box = 'Lee'; 
-    alert(box.link('http://www.yc60.com'));  //超链接
+    var box = 'Lee';
+    alert(box.link('http://www.yc60.com')); //超链接
 
 
 
