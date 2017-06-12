@@ -4,11 +4,11 @@
 git clone [url]
 
 设置贡献者
-git config --global user.name “”
-git config --global user.email “”
+git config --global user.name ''
+git config --global user.email ''
 
 查看git下所有配置
-git .config – list
+git config --list
 
 查看状态
 git status
@@ -17,7 +17,7 @@ git status
 git add [filename]
 
 提交到仓库并写好注释
-git conmmit -m “注释”
+git conmmit -m '注释'
 
 直接从工作区提交到版本区
-git conmmit -a -m “注释”
+git conmmit -a -m '注释'
