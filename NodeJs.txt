@@ -1,0 +1,3 @@
+http --- 协议
+	request     请求   输入请求的信息
+	response    输出   输出的东西
