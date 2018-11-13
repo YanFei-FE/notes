@@ -1,3 +1,26 @@
 http --- 协议
-	request     请求   输入请求的信息
-	response    输出   输出的东西
+    var server = http.createServer(function(request, response){
+        ...
+        response.end();
+    }).listen(端口号);
+    request     请求   输入请求的信息
+    response    输出   输出的东西
+
+文件操作 fs ----- File System
+    读取文件
+    fs.readFile('文件路径', function(err, data){
+        if(err){
+            console.log(err);
+        }else{
+            console.log(data.toString);
+        }
+    })
+
+    写人文件
+    fs.writeFile('文件路径', function(err){
+        if(err){
+            console.log('错误');
+        }else{
+            console.log('成功');
+        }
+    })
